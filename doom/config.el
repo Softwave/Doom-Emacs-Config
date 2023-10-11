@@ -1,3 +1,5 @@
+
+
 (global-set-key (kbd "M-9") 'kill-whole-line)
 
 (after! core-ui (menu-bar-mode 1))
@@ -48,6 +50,27 @@
   [menu-bar tools my-load-cheat]
   '("Load Cheatsheet" . my-load-cheat)
   'compile)
+
+;; Load KickAssembler Mode
+(require 'kickasm-mode)
+;; Assemble to prg
+(defun my-assemble-to-prg ()
+  "Assemble the current buffer into a .prg file using Kick Assembler."
+  (interactive)
+  (let* ((source-file (buffer-file-name))
+         (output-file (concat (file-name-sans-extension source-file) ".prg"))
+         (command (format "%s %s -o %s -vicesymbols -debugdump"
+                          kickasm-command
+                          source-file
+                          output-file)))
+    (compile command)
+    (message "Assembling to %s..." output-file)))
+
+(define-key global-map (kbd "C-c C-a") 'my-assemble-to-prg)
+
+;; Set the assemble command
+(setq kickasm-command "java -jar /home/discovery/Documents/KickAss/KickAss.jar")
+
 
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 

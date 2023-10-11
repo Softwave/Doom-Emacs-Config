@@ -44,6 +44,10 @@
   
 (package! nyan-mode)
 
+(package! kickasm-mode
+  :recipe (:host github :repo "mweidhagen/kickasm-mode"
+           :files ("kickasm-mode.el" "src/lisp/*.el")))
+
 ;; Doom's packages are pinned to a specific commit and updated from release to
 ;; release. The `unpin!' macro allows you to unpin single packages...
 ;(unpin! pinned-package)
