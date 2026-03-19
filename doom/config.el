@@ -1,77 +1,3 @@
-
-
-(global-set-key (kbd "M-9") 'kill-whole-line)
-
-(after! core-ui (menu-bar-mode 1))
-(menu-bar-mode 1)
-(tool-bar-mode 1)
-(scroll-bar-mode 1)
-(cua-mode t)
-
-(add-hook! 'doom-load-theme-hook :append
-  (setq doom-font (font-spec :family "Mx437 IBM BIOS-2y" :size 16))
-  (doom/reload-font))
-
-(setq doom-theme 'Spaceworm92)
-
-;(add-to-list 'load-path "/home/discovery/.config/doom/copilot")
-(require 'copilot)
-(define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-
-
-(setq ;; makes killing/yanking interact with the clipboard
-      x-select-enable-clipboard t
-
-      ;; I'm actually not sure what this does but it's recommended?
-      x-select-enable-primary t
-
-      ;; Save clipboard strings into kill ring before replacing them.
-      ;; When one selects something in another program to paste it into Emacs,
-      ;; but kills something in Emacs before actually pasting it,
-      ;; this selection is gone unless this variable is non-nil
-      save-interprogram-paste-before-kill t
-
-      ;; Shows all options when running apropos. For more info,
-      ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Apropos.html
-      apropos-do-all t
-
-      ;; Mouse yank commands yank at point instead of at click.
-      mouse-yank-at-point t)
-
-;; Load cheatsheet
-(defun my-load-cheat ()
-  "Load and display the cheatsheet"
-  (interactive)
-  (find-file "/home/discovery/Documents/TheVault/Cheatsheets/Emacs.md"))
-(global-set-key (kbd "C-x M-c") 'my-load-cheat)
-;; Add menu item to tools menu
-(define-key-after
-  global-map
-  [menu-bar tools my-load-cheat]
-  '("Load Cheatsheet" . my-load-cheat)
-  'compile)
-
-;; Load KickAssembler Mode
-(require 'kickasm-mode)
-;; Assemble to prg
-(defun my-assemble-to-prg ()
-  "Assemble the current buffer into a .prg file using Kick Assembler."
-  (interactive)
-  (let* ((source-file (buffer-file-name))
-         (output-file (concat (file-name-sans-extension source-file) ".prg"))
-         (command (format "%s %s -o %s -vicesymbols -debugdump"
-                          kickasm-command
-                          source-file
-                          output-file)))
-    (compile command)
-    (message "Assembling to %s..." output-file)))
-
-(define-key global-map (kbd "C-c C-a") 'my-assemble-to-prg)
-
-;; Set the assemble command
-(setq kickasm-command "java -jar /home/discovery/Documents/KickAss/KickAss.jar")
-
-
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
@@ -106,7 +32,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-;;(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-one)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -118,23 +44,22 @@
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
+;; `with-eval-after-load' block, otherwise Doom's defaults may override your
+;; settings. E.g.
 ;;
-;;   (after! PACKAGE
+;;   (with-eval-after-load 'PACKAGE
 ;;     (setq x y))
 ;;
 ;; The exceptions to this rule:
 ;;
 ;;   - Setting file/directory variables (like `org-directory')
 ;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
+;;     package is loaded (see 'C-h v VARIABLE' to look them up).
 ;;   - Setting doom variables (which start with 'doom-' or '+').
 ;;
 ;; Here are some additional functions/macros that will help you configure Doom.
 ;;
 ;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
 ;; - `add-load-path!' for adding directories to the `load-path', relative to
 ;;   this file. Emacs searches the `load-path' when you load packages with
 ;;   `require' or `use-package'.
@@ -150,12 +75,135 @@
 ;; they are implemented.
 
 
+;; Enabling cua mode
+(cua-mode 1)
+(setq cua-enable-cua-keys t)
+;; Some other stuff
+(global-font-lock-mode 1)
 
+;; Enable menu bar
+(menu-bar-mode 1)
+(after! doom
+  (tool-bar-mode 1))
+(setq tool-bar-style 'text)
+(scroll-bar-mode 1)
+;;(tab-bar-mode 1)
+
+;;(setq doom-fallback-font "monospace")
+
+
+;; GitHub Copilot Config
+(use-package copilot
+  :ensure t
+  :bind (:map copilot-completion-map
+              ("<tab>" . copilot-accept-completion)
+              ("TAB" . copilot-accept-completion)
+              ("C-<tab>" . copilot-accept-completion-by-word)
+              ("C-TAB" . copilot-accept-completion-by-word)
+              ("C-n" . copilot-next-completion)
+              ("C-p" . copilot-previous-completion)))
+
+(global-set-key (kbd "C-c C-o") #'copilot-mode)
+(global-set-key (kbd "C-c C-c") #'copilot-complete)
+
+;; Copilot Keybindings
+(map! :leader
+      :desc "Copilot chat" "c c" #'copilot-chat) ;; Ctrl-c c c to enter chat
+(global-set-key (kbd "C-c C-o") #'copilot-mode) ;; Ctrl-c ctrl-o to toggle copilot mode
+
+;; My personal keybindings
+(global-set-key (kbd "M-9") 'kill-whole-line) ;; Delete whole line on alt-9
+
+;; Force toolbar
+(add-hook 'after-init-hook
+          (lambda ()
+            (tool-bar-mode 1)
+            (menu-bar-mode 1)
+            (scroll-bar-mode 1)))
+
+
+;; Disable the bolding and italic modern font stuff
+(setq doom-themes-enable-bold nil
+      doom-themes-enable-italic nil)
+
+;; Set the theme 
+(setq doom-theme 'spaceworm92)
+
+
+
+
+;; LSP Mode
+(after! lsp-mode
+  (setq lsp-semantic-tokens-enable t))
+
+;; Basic indent settings
+(setq c-basic-offset 4)
+(setq-default tab-w(use-package! colorful-mode
+  :hook (prog-mode . colorful-mode))idth 4)
+(setq c-default-style "bsd")
+(setq indent-tabs-mode nil) ;; or t if you prefer tabs
+
+;; C/C++ Mode 
+;;(after! cc-mode
+;;  (setq c-default-style "bsd") ;; closest built-in to Allman
+;;  (setq c-basic-offset 4))
+
+;; Scroll in company mode
+;; Enable mouse wheel scrolling in company mode popup
+(with-eval-after-load 'company
+  (define-key company-active-map (kbd "<mouse-4>") #'company-select-previous)
+  (define-key company-active-map (kbd "<mouse-5>") #'company-select-next)
+  (define-key company-active-map (kbd "<wheel>-up") #'company-select-previous)
+  (define-key company-active-map (kbd "<wheel>-down") #'company-select-next))
+(pixel-scroll-precision-mode 1)
+;; Fix auto scroll stuff 
+(setq auto-hscroll-mode nil)
+;;
+(setq hscroll-margin 0)
+(setq hscroll-step 1)
+(setq scroll-conservatively 101)
+(setq scroll-margin 3)
+(after! company
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 1)
+  (setq company-idle-delay 0.1))
+(setq-default truncate-lines t)
+(after! company
+  (setq company-tooltip-limit 200))
+
+(after! company
+  (setq company-transformers '(company-sort-by-occurrence)))
+
+;; Colourful mode
+(use-package! colorful-mode
+  :hook (prog-mode . colorful-mode))
+
+
+
+
+;; Nyan mode
 (nyan-mode)
 (nyan-toggle-wavy-trail)
 ;;(setq nyan-wavy-trail t nyan-minimum-window-width 1 nyan-bar-length 12)
+;;(setq nyan-bar-length 24)
+(setq nyan-bar-length 32)
 (nyan-start-animation)
+(setq nyan-minimum-window-width 0)
+
 (use-package! whitespace
   :config
   (setq
     global-whitespace-mode nil))
+
+;; Which function
+;; No indent thingies
+(setq whitespace-style nil)
+
+;; Fonts 
+(run-with-idle-timer
+ 0.5 nil
+ (lambda ()
+   (set-frame-font "Mx437 IBM BIOS-2y-14" nil t)
+   (setq whitespace-style nil)
+   (global-whitespace-mode -1)))
+
