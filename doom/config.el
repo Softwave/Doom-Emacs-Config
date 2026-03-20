@@ -239,7 +239,7 @@
 (defun my-load-cheat ()
   "Load and display the cheatsheet"
   (interactive)
-  (find-file "/home/discovery/Documents/cheat/personal/MyEmacs.md"))
+  (find-file "/home/discovery/.config/doom/MyEmacs.md"))
 (global-set-key (kbd "C-x M-c") 'my-load-cheat)
 ;; Add menu item to tools menu
 (define-key-after
