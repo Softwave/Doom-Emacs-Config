@@ -74,6 +74,9 @@
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
 
+;; Load files in DOOM folder
+(add-to-list 'load-path "~/.config/doom/")
+
 
 ;; Enabling cua mode
 (cua-mode 1)
@@ -127,8 +130,8 @@
       doom-themes-enable-italic nil)
 
 ;; Set the theme 
-(setq doom-theme 'spaceworm92)
-
+;;(setq doom-theme 'spaceworm92)
+(setq doom-theme 'Spaceworm92)
 
 
 
@@ -186,7 +189,7 @@
 (nyan-toggle-wavy-trail)
 ;;(setq nyan-wavy-trail t nyan-minimum-window-width 1 nyan-bar-length 12)
 ;;(setq nyan-bar-length 24)
-(setq nyan-bar-length 32)
+(setq nyan-bar-length 48)
 (nyan-start-animation)
 (setq nyan-minimum-window-width 0)
 
@@ -203,7 +206,74 @@
 (run-with-idle-timer
  0.5 nil
  (lambda ()
-   (set-frame-font "Mx437 IBM BIOS-2y-14" nil t)
+   (set-frame-font "Mx437 IBM BIOS-2y-12" nil t)
    (setq whitespace-style nil)
    (global-whitespace-mode -1)))
 
+;; GLSL Mode
+(use-package! glsl-mode
+  :mode ("\\.glsl\\'" "\\.frag\\'" "\\.vert\\'" "\\.fs\\'" "\\.vs\\'"))
+
+;; KickAssembler Mode for Commodore 64 programming
+(add-to-list 'load-path "~/.config/doom/lisp")
+(require 'kickasm-mode)
+
+(defun my-assemble-to-prg ()
+  "Assemble the current buffer into a .prg file using Kick Assembler."
+  (interactive)
+  (let* ((source-file (buffer-file-name))
+         (output-file (concat (file-name-sans-extension source-file) ".prg"))
+         (command (format "%s %s -o %s -vicesymbols -debugdump"
+                          kickasm-command
+                          source-file
+                          output-file)))
+    (compile command)
+    (message "Assembling to %s..." output-file)))
+(define-key global-map (kbd "C-c C-a") 'my-assemble-to-prg)
+
+;; Set the assemble command
+(setq kickasm-command "java -jar /home/discovery/Apps/KickAssembler/KickAss.jar")
+
+;; Emacs Cheatsheet
+;; Load cheatsheet
+(defun my-load-cheat ()
+  "Load and display the cheatsheet"
+  (interactive)
+  (find-file "/home/discovery/Documents/cheat/personal/MyEmacs.md"))
+(global-set-key (kbd "C-x M-c") 'my-load-cheat)
+;; Add menu item to tools menu
+(define-key-after
+  global-map
+  [menu-bar tools my-load-cheat]
+  '("Load Cheatsheet" . my-load-cheat)
+  'compile)
+
+
+;; Modeline colours
+(provide 'modeline-stuff)
+;;; modeline-stuff.el ends here
+(after! doom-modeline
+  (setq doom-modeline-check-icon nil)
+  (custom-set-faces!
+    '(doom-modeline-info :foreground "#98FB98") ;; light green (PaleGreen)
+    '(doom-modeline-buffer-modified :foreground "#CD5C5C") ;; your indian red
+    '(doom-modeline-buffer-file :foreground "#ffffff")
+    '(doom-modeline-buffer-path :foreground "#cccccc")
+    '(doom-modeline-buffer-modification-icon :foreground "medium purple")
+    '(doom-modeline-mode :foreground "#cccccc")))
+
+(custom-set-faces!
+  '(mode-line :background "#000000" :foreground "#dddddd")
+  '(mode-line-inactive :background "#111111" :foreground "#888888"))
+
+;; Just get rid of modeline icons, it doesn't match our awesome retro aesthetic, yo
+(setq doom-modeline-icon nil)
+
+;; Make vterm respond to Ctrl-c Ctrl-c
+(after! vterm
+  (map! :map vterm-mode-map
+        :i "C-c C-c" #'vterm-send-C-c
+        :i "C-c"     #'vterm-send-C-c))
+;; Disable copilot in VTerm
+(after! vterm
+  (add-hook 'vterm-mode-hook (lambda () (copilot-mode -1))))

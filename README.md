@@ -1,8 +1,8 @@
 # Doom-Emacs-Config
 
-My [Doom Emacs](https://github.com/doomemacs/doomemacs) configuration files.
+My Emacs config (using [DOOM Emacs](https://github.com/doomemacs/doomemacs)). I call the theme I am going for: *a retro-futurist hacker laboratory*.
 
-Made for C/C++, C#, 6502 Assembly (C64 with KickAssembler) development and more. 
+For more information about the tools I use, [see my FAQ](https://s0ftwave.net/FAQ/). 
 
 (Pictured with the [NsCDE desktop](https://github.com/NsCDE/NsCDE))
 ![Screenshot](https://github.com/Softwave/Doom-Emacs-Config/blob/main/screen1.png)

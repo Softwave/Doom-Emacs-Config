@@ -67,3 +67,6 @@
 
 ;; Nyan mode!
 (package! nyan-mode)
+
+;; GLSL Mode
+(package! glsl-mode)
