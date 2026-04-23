@@ -19,6 +19,8 @@ Cancel a command                  Ctrl-g
 Replace                           M-% (M-SHIFT-5) then press y
 Search/Find                       Ctrl-s (Then repeat to go to next occurence)
 Indent                            Select text then press TAB
+Delete word forward               M-d
+Delete word backward              M-del 
 
 
 # Buffers

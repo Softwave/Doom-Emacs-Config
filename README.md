@@ -5,4 +5,4 @@ My Emacs config (using [DOOM Emacs](https://github.com/doomemacs/doomemacs)). I 
 For more information about the tools I use, [see my FAQ](https://s0ftwave.net/FAQ/). 
 
 (Pictured with the [NsCDE desktop](https://github.com/NsCDE/NsCDE))
-![Screenshot](https://github.com/Softwave/Doom-Emacs-Config/blob/main/screen1.png)
+![screenshot](/screenNew.png).

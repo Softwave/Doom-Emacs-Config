@@ -62,6 +62,7 @@
 (package! copilot-chat
   :recipe (:host github :repo "chep/copilot-chat.el"))
 
+
 ;; Colourful mode
 (package! colorful-mode)
 

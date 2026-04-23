@@ -77,6 +77,8 @@
 ;; Load files in DOOM folder
 (add-to-list 'load-path "~/.config/doom/")
 
+(add-to-list 'custom-theme-load-path "~/.doom.d/themes/")
+
 
 ;; Enabling cua mode
 (cua-mode 1)
@@ -131,8 +133,8 @@
 
 ;; Set the theme 
 ;;(setq doom-theme 'spaceworm92)
-(setq doom-theme 'Spaceworm92)
-
+;(setq doom-theme 'Spaceworm92)
+(setq doom-theme 'softwave)
 
 
 ;; LSP Mode
@@ -206,9 +208,15 @@
 (run-with-idle-timer
  0.5 nil
  (lambda ()
-   (set-frame-font "Mx437 IBM BIOS-2y-12" nil t)
+   ;;(set-frame-font "Mx437 IBM BIOS-2y-12" nil t)
+   (set-frame-font "-ibm-ega-normal-r-normal--14-100-96-96-c-90-iso10646-1" nil t)
    (setq whitespace-style nil)
    (global-whitespace-mode -1)))
+
+
+
+;; Disable font scaling
+(setq-default text-scale-mode-amount 0)
 
 ;; GLSL Mode
 (use-package! glsl-mode
@@ -221,7 +229,7 @@
 (defun my-assemble-to-prg ()
   "Assemble the current buffer into a .prg file using Kick Assembler."
   (interactive)
-  (let* ((source-file (buffer-file-name))
+  (let* ((source-file (bufer-file-name))
          (output-file (concat (file-name-sans-extension source-file) ".prg"))
          (command (format "%s %s -o %s -vicesymbols -debugdump"
                           kickasm-command
@@ -248,6 +256,17 @@
   '("Load Cheatsheet" . my-load-cheat)
   'compile)
 
+;; Reset font command
+;;(defun reset-font-orig ()
+;;  "Resets the font if something's gone wrong"
+;;  (interactive)
+;;  (set-frame-font "Mx437 IBM BIOS-2y-12" nil t))
+;;(define-key-after
+;;  global-map
+;;  [menu-bar tools reset-font-org]
+;;  '("Reset Font" . reset-font-orig)
+;;  'compile)
+
 
 ;; Modeline colours
 (provide 'modeline-stuff)
@@ -255,8 +274,8 @@
 (after! doom-modeline
   (setq doom-modeline-check-icon nil)
   (custom-set-faces!
-    '(doom-modeline-info :foreground "#98FB98") ;; light green (PaleGreen)
-    '(doom-modeline-buffer-modified :foreground "#CD5C5C") ;; your indian red
+    '(doom-modeline-info :foreground "light green") ;; light green (PaleGreen)
+    '(doom-modeline-buffer-modified :foreground "indian red") ;; your indian red
     '(doom-modeline-buffer-file :foreground "#ffffff")
     '(doom-modeline-buffer-path :foreground "#cccccc")
     '(doom-modeline-buffer-modification-icon :foreground "medium purple")
@@ -277,3 +296,18 @@
 ;; Disable copilot in VTerm
 (after! vterm
   (add-hook 'vterm-mode-hook (lambda () (copilot-mode -1))))
+
+;;
+;; Disable current line highlight everywhere
+(remove-hook 'prog-mode-hook #'hl-line-mode)
+(remove-hook 'text-mode-hook #'hl-line-mode)
+(remove-hook 'conf-mode-hook #'hl-line-mode)
+
+(global-hl-line-mode -1)
+
+(custom-set-faces!
+  '(hl-line :background nil))
+
+
+;; Don't yell at me when I wanna leave lol
+(setq confirm-kill-emacs nil)
