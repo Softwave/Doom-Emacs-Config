@@ -98,23 +98,33 @@
 
 
 ;; GitHub Copilot Config
-(use-package copilot
-  :ensure t
-  :bind (:map copilot-completion-map
-              ("<tab>" . copilot-accept-completion)
-              ("TAB" . copilot-accept-completion)
-              ("C-<tab>" . copilot-accept-completion-by-word)
-              ("C-TAB" . copilot-accept-completion-by-word)
-              ("C-n" . copilot-next-completion)
-              ("C-p" . copilot-previous-completion)))
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :config
+  (setq copilot-idle-delay 0.5)
+  (add-to-list 'copilot-disable-predicates
+               (lambda () (derived-mode-p 'org-mode 'text-mode)))
+  (map! :map copilot-completion-map
+        "<tab>" #'copilot-accept-completion
+        "TAB" #'copilot-accept-completion
+        "C-<tab>" #'copilot-accept-completion-by-word
+        "C-f" #'copilot-accept-completion
+        "M-n" #'copilot-next-completion
+        "M-p" #'copilot-previous-completion))
 
-(global-set-key (kbd "C-c C-o") #'copilot-mode)
-(global-set-key (kbd "C-c C-c") #'copilot-complete)
+(use-package! gh-copilot-chat
+  :after (request org markdown-mode)
+  :config
+  (setq copilot-chat-frontend 'markdown)) ; or 'markdown
 
-;; Copilot Keybindings
-(map! :leader
-      :desc "Copilot chat" "c c" #'copilot-chat) ;; Ctrl-c c c to enter chat
-(global-set-key (kbd "C-c C-o") #'copilot-mode) ;; Ctrl-c ctrl-o to toggle copilot mode
+;; (global-set-key (kbd "C-c C-o") #'copilot-mode)
+;; (global-set-key (kbd "C-c C-c") #'copilot-complete)
+
+;; ;; Copilot Keybindings
+;; (map! :leader
+;;       :desc "Copilot chat" "c c" #'copilot-chat) ;; Ctrl-c c c to enter chat
+;; (global-set-key (kbd "C-c C-o") #'copilot-mode) ;; Ctrl-c ctrl-o to toggle copilot mode
+;; (keymap-set copilot-completion-map "C-f" #'copilot-accept-completion)
 
 ;; My personal keybindings
 (global-set-key (kbd "M-9") 'kill-whole-line) ;; Delete whole line on alt-9
@@ -143,10 +153,13 @@
 
 ;; Basic indent settings
 (setq c-basic-offset 4)
-(setq-default tab-w(use-package! colorful-mode
-  :hook (prog-mode . colorful-mode))idth 4)
+(setq-default tab-width 4)
 (setq c-default-style "bsd")
 (setq indent-tabs-mode nil) ;; or t if you prefer tabs
+
+;; Colorful mode for color codes
+(use-package! colorful-mode
+  :hook (prog-mode . colorful-mode))
 
 ;; C/C++ Mode 
 ;;(after! cc-mode
@@ -208,8 +221,8 @@
 (run-with-idle-timer
  0.5 nil
  (lambda ()
-   ;;(set-frame-font "Mx437 IBM BIOS-2y-12" nil t)
-   (set-frame-font "-ibm-ega-normal-r-normal--14-100-96-96-c-90-iso10646-1" nil t)
+   (set-frame-font "Mx437 IBM BIOS-2y-12" nil t)
+   ;;(set-frame-font "-ibm-ega-normal-r-normal--14-100-96-96-c-90-iso10646-1" nil t)
    (setq whitespace-style nil)
    (global-whitespace-mode -1)))
 
@@ -229,7 +242,7 @@
 (defun my-assemble-to-prg ()
   "Assemble the current buffer into a .prg file using Kick Assembler."
   (interactive)
-  (let* ((source-file (bufer-file-name))
+  (let* ((source-file (buffer-file-name))
          (output-file (concat (file-name-sans-extension source-file) ".prg"))
          (command (format "%s %s -o %s -vicesymbols -debugdump"
                           kickasm-command
@@ -294,8 +307,8 @@
         :i "C-c C-c" #'vterm-send-C-c
         :i "C-c"     #'vterm-send-C-c))
 ;; Disable copilot in VTerm
-(after! vterm
-  (add-hook 'vterm-mode-hook (lambda () (copilot-mode -1))))
+;; (after! vterm
+;;   (add-hook 'vterm-mode-hook (lambda () (copilot-mode -1))))
 
 ;;
 ;; Disable current line highlight everywhere
@@ -311,3 +324,10 @@
 
 ;; Don't yell at me when I wanna leave lol
 (setq confirm-kill-emacs nil)
+
+;; Silence annoying warnings
+;; Later on if we need it we can add
+;; '(add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2))' to it
+;; but for now just shut it up
+(add-to-list 'warning-suppress-types '(copilot))
+

@@ -10,8 +10,7 @@
      "ff24d14f5f7d355f47d53fd016565ed128bf3af30eb7ce8cae307ee4fe7f3fd0"
      "c3c135e69890de6a85ebf791017d458d3deb3954f81dcb7ac8c430e1620bb0f1"
      "f4d1b183465f2d29b7a2e9dbe87ccc20598e79738e5d29fc52ec8fb8c576fcfd" default))
- '(package-selected-packages '(colorful-mode rainbow-mode))
- '(warning-suppress-log-types '((copilot copilot-no-mode-indent))))
+ '(package-selected-packages '(colorful-mode rainbow-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

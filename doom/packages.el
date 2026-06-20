@@ -54,13 +54,22 @@
 ;; (unpin! t)
 
 
+(package! polymode)
+(package! aio)
+(package! transient)
+(package! shell-maker)
+(package! mcp)
+(package! request)
+
+
+
 ;; GitHub Copilot
 (package! copilot
-  :recipe (:host github :repo "copilot-emacs/copilot.el"))
+  :recipe (:host github :repo "copilot-emacs/copilot.el"
+           :files ("*.el" (:exclude "copilot-chat.el"))))
 
-;; Copilot Chat
-(package! copilot-chat
-  :recipe (:host github :repo "chep/copilot-chat.el"))
+(package! gh-copilot-chat
+  :recipe (:host github :repo "chep/gh-copilot-chat.el" :files ("*.el")))
 
 
 ;; Colourful mode
