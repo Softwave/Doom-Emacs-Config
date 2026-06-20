@@ -180,7 +180,8 @@
 (setq hscroll-margin 0)
 (setq hscroll-step 1)
 (setq scroll-conservatively 101)
-(setq scroll-margin 3)
+                                        ;(setq scroll-margin 3)
+(setq scroll-margin 0)
 (after! company
   (setq company-tooltip-align-annotations t)
   (setq company-minimum-prefix-length 1)
